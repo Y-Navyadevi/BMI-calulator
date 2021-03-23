@@ -15,7 +15,7 @@ class App extends React.Component {
     this.handleHeightFeetChange = this.handleHeightFeetChange.bind(this);
     this.handleHeightInchChange = this.handleHeightInchChange.bind(this);
     this.handleWeightChange = this.handleWeightChange.bind(this);
-
+    this.calculateBMI = this.calculateBMI.bind(this);
   }
 
   handleHeightFeetChange(event){
@@ -36,9 +36,36 @@ class App extends React.Component {
     });
   }
 
+  calculateBMI(){
+    if (this.state.weight && this.state.heightFeet && this.state.heightInch){
+      // BMI Formula = (WEIGHT[in pounds] / (HEIGHT[in inches] * HEIGHT[in inches])) * 703;
+      let INCHES_IN_FEET = 12;
+
+      var height = Number(this.state.heightFeet);
+          // convert feet to inches
+          height *= INCHES_IN_FEET;
+          // add the inches input field
+          height += Number(this.state.heightInch);
+
+      let weight = this.state.weight;
+
+      var bmi = (weight / (height * height)) * 703;
+          bmi = bmi.toFixed(2);
+
+      return bmi;
+    }
+  }
+
+  getBMIResults(bmi){
+    let bmiResults = {
+    };
+    return bmiResults;
+  }
 
   render() {
 
+    let bmi = this.calculateBMI();
+    let results = this.getBMIResults(bmi);
 
     return (
       <div className="App container">
@@ -56,7 +83,7 @@ class App extends React.Component {
                 <div className="row">
                   <div className="col-xs-12">
                     <input className="form-control" id="bmiWeight" type="number" min="1" max="1000" value={ this.state.weight } onChange={ this.handleWeightChange } />
-                    <label className="control-label" htmlFor="bmiWeight">KG</label>
+                    <label className="control-label" htmlFor="bmiWeight">lb</label>
                   </div>
                 </div>
               </div>
@@ -66,11 +93,11 @@ class App extends React.Component {
                 <div className="row">
                   <div className="col-xs-6">
                     <input className="form-control" id="bmiHeightFeet" type="number" min="1" max="12" value={ this.state.heightFeet } onChange={ this.handleHeightFeetChange } />
-                    <label className="control-label" htmlFor="bmiHeightFeet">"</label>
+                    <label className="control-label" htmlFor="bmiHeightFeet">ft</label>
                   </div>
                   <div className="col-xs-6">
                     <input className="form-control" id="bmiHeightInch" type="number" min="0" max="12" value={ this.state.heightInch } onChange={ this.handleHeightInchChange } />
-                    <label className="control-label" htmlFor="bmiHeightInch">'</label>
+                    <label className="control-label" htmlFor="bmiHeightInch">in</label>
                   </div>
                 </div>
               </div>
@@ -78,6 +105,7 @@ class App extends React.Component {
           </div>
 
           <div className="col-sm-6">
+            <BmiDisplay bmi={bmi} label={results.label} alertClass={results.alertClass} />
           </div>
 
         </div>
@@ -86,6 +114,14 @@ class App extends React.Component {
   }
 }
 
+function BmiDisplay(props){
+  return (
+    <div className={"bmi-result alert " + props.alertClass}>
+      <div>{ props.bmi || '--.-' }</div>
+      <div>{ props.label }</div>
+    </div> 
+  )
+}
 
 
 
